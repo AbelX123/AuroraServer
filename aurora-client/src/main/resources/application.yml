@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+# datasource
+spring:
+  datasource:cd 
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 12345678
+    url: jdbc:mysql://192.168.184.135:3306/aurora
+  redis:
+    host: 192.168.184.135
+    database: 1
+    port: 6379
+    timeout: 3000
+    username: default
+    password: 12345678
+  data:
+    mongodb:
+      uri: mongodb://aurora:12345678@192.168.184.135:27017/aurora?authSource=aurora
+
