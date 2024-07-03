@@ -1,6 +1,6 @@
 package com.aurora.client.common;
 
-import com.aurora.client.common.enumeration.ResultEnum;
+import com.aurora.client.common.enumeration.ResultCode;
 import lombok.Data;
 
 /**
@@ -32,9 +32,18 @@ public class CommonResult<T> {
     /**
      * 成功的应答
      */
+    public static <T> CommonResult<T> success() {
+        return CommonResult.<T>newBuilder().status(ResultCode.SUCCESS.getStatus())
+                .message(ResultCode.SUCCESS.getMessage())
+                .build();
+    }
+
+    /**
+     * 成功含有数据的应答
+     */
     public static <T> CommonResult<T> success(T data) {
-        return CommonResult.<T>newBuilder().status(ResultEnum.SUCCESS.getStatus())
-                .message(ResultEnum.SUCCESS.getMessage())
+        return CommonResult.<T>newBuilder().status(ResultCode.SUCCESS.getStatus())
+                .message(ResultCode.SUCCESS.getMessage())
                 .data(data)
                 .sign(null)
                 .build();
@@ -43,9 +52,21 @@ public class CommonResult<T> {
     /**
      * 失败的应答
      */
-    public static <T> CommonResult<T> failure(ResultEnum failure) {
+    public static <T> CommonResult<T> failure(ResultCode failure) {
+        // 静态范型方法调用
         return CommonResult.<T>newBuilder().status(failure.getStatus())
                 .message(failure.getMessage())
+                .build();
+    }
+
+    /**
+     * 失败含有数据的应答
+     */
+    public static <T> CommonResult<T> failure(ResultCode failure, T data) {
+        // 静态范型方法调用
+        return CommonResult.<T>newBuilder().status(failure.getStatus())
+                .message(failure.getMessage())
+                .data(data)
                 .build();
     }
 

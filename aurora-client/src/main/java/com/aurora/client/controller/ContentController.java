@@ -1,46 +1,64 @@
 package com.aurora.client.controller;
 
 import com.aurora.client.common.CommonResult;
-import com.aurora.client.entity.Content;
+import com.aurora.client.common.dto.ContentDTO;
+import com.aurora.client.common.validation.ContentValidationGroup;
+import com.aurora.client.common.vo.ContentVO;
+import com.aurora.client.common.vo.ProfileVO;
 import com.aurora.client.service.IContentService;
-import com.aurora.client.vo.ContentVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import static com.aurora.client.common.enumeration.ResultCode.OTHER_ERROR;
 
 @RestController
 @RequestMapping("/content")
 public class ContentController {
 
-    private IContentService contentService;
-
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private IContentService cs;
 
     /**
-     * setter注入
+     * 问答入库
      */
-    @Autowired
-    public void setContentService(IContentService contentService) {
-        this.contentService = contentService;
+    @PostMapping("/saveContent")
+    public CommonResult<ContentVO> saveContent(@RequestBody @Validated ContentDTO contentDTO) {
+        boolean save = cs.saveContent(contentDTO);
+        if (save) {
+            return CommonResult.success();
+        } else {
+            return CommonResult.failure(OTHER_ERROR);
+        }
     }
 
     /**
-     *  问答入库
+     * 问答更新
      */
-    @GetMapping("/saveContent")
-    public CommonResult<Content> saveContent(Content content) {
-        redisTemplate.opsForValue().set("aaa", "aaa");
-        return CommonResult.success(content);
+    @PutMapping("/updateContent")
+    public CommonResult<ContentVO> updateContent(@RequestBody
+                                                 @Validated(value = ContentValidationGroup.Update.class) ContentDTO contentDTO) {
+        boolean update = cs.updateContent(contentDTO);
+        if (update) {
+            return CommonResult.success();
+        } else {
+            return CommonResult.failure(OTHER_ERROR);
+        }
     }
 
-    @GetMapping("/getContentByUserId")
-    public CommonResult<ContentVO> getContentByContentId(String contentId) {
-        return contentService.getContentByContentId(contentId);
+    /**
+     * 依据内容编号获取内容
+     */
+    @GetMapping("/getContentByContentId")
+    public CommonResult<ContentVO> getContentByContentId(@RequestParam(value = "contentId") String contentId) {
+        return CommonResult.success(cs.getContentByContentId(contentId));
     }
 
+    /**
+     * 依据用户编号获取时间段的内容列表
+     */
+    @GetMapping("/getProfileByUserId")
+    public CommonResult<ProfileVO> getProfileByUserId(@RequestParam(value = "userId") String userId) {
+        return CommonResult.success(cs.getProfileByUserId(userId));
+    }
 }

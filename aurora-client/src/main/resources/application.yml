@@ -3,7 +3,7 @@ server:
 
 # datasource
 spring:
-  datasource:cd 
+  datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 12345678
