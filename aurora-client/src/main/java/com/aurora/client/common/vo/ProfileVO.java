@@ -3,7 +3,6 @@ package com.aurora.client.common.vo;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 概述VO
@@ -12,5 +11,11 @@ import java.util.Map;
 public class ProfileVO {
     private String userId;
 
-    private Map<String, List<String>> allProfiles;
+    private List<AllProfile> allProfiles;
+
+    @Data
+    public static class AllProfile {
+        private String time;
+        private List<ContentVO> profiles;
+    }
 }

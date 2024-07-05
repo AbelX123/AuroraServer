@@ -66,17 +66,27 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
         ProfileVO pvo = new ProfileVO();
 
         // 使用Map来汇总相同时间的数据
-        Map<String, List<String>> allProfile = new HashMap<>();
+        Map<String, List<ContentVO>> map = new HashMap<>();
+
+        List<ProfileVO.AllProfile> allProfiles = new ArrayList<>();
 
         for (ContentEntity entity : list) {
             String key = PeriodUtil.timeToPeriod(entity.getContentCreateTime()).getDayName();
-            String profile = entity.getContentProfile();
-            if (!allProfile.containsKey(key)) {
-                allProfile.put(key, new ArrayList<>());
+            ContentVO cvo = new ContentVO();
+            cvo.setContentId(entity.getContentId());
+            cvo.setContentProfile(entity.getContentProfile());
+            if (!map.containsKey(key)) {
+                map.put(key, new ArrayList<>());
             }
-            allProfile.get(key).add(profile);
+            map.get(key).add(cvo);
         }
-        pvo.setAllProfiles(allProfile);
+        map.forEach((key, value) -> {
+            ProfileVO.AllProfile allProfile = new ProfileVO.AllProfile();
+            allProfile.setTime(key);
+            allProfile.setProfiles(value);
+            allProfiles.add(allProfile);
+        });
+        pvo.setAllProfiles(allProfiles);
         return pvo;
     }
 

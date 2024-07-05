@@ -6,12 +6,16 @@ import com.aurora.client.common.validation.ContentValidationGroup;
 import com.aurora.client.common.vo.ContentVO;
 import com.aurora.client.common.vo.ProfileVO;
 import com.aurora.client.service.IContentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static com.aurora.client.common.enumeration.ResultCode.OTHER_ERROR;
 
+@Slf4j
 @RestController
 @RequestMapping("/content")
 public class ContentController {
@@ -51,6 +55,7 @@ public class ContentController {
      */
     @GetMapping("/getContentByContentId")
     public CommonResult<ContentVO> getContentByContentId(@RequestParam(value = "contentId") String contentId) {
+        log.info("-----");
         return CommonResult.success(cs.getContentByContentId(contentId));
     }
 
@@ -58,7 +63,7 @@ public class ContentController {
      * 依据用户编号获取时间段的内容列表
      */
     @GetMapping("/getProfileByUserId")
-    public CommonResult<ProfileVO> getProfileByUserId(@RequestParam(value = "userId") String userId) {
+    public CommonResult<ProfileVO> getProfileByUserId(HttpServletRequest request, @RequestParam(value = "userId") String userId) {
         return CommonResult.success(cs.getProfileByUserId(userId));
     }
 }

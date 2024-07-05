@@ -1,8 +1,8 @@
 package com.aurora.client.common.enumeration;
 
 public enum Period {
-    TODAY(0, "今天"),
-    YESTERDAY(1, "昨天"),
+    TODAY(0, "一天内"),
+    YESTERDAY(1, "一天前"),
     THREE_DAY_AGO(3, "三天前"),
     SEVEN_DAY_AGO(7, "七天前"),
     HALF_MONTH_AGO(15, "半个月前"),

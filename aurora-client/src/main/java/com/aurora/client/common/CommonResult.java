@@ -3,11 +3,13 @@ package com.aurora.client.common;
 import com.aurora.client.common.enumeration.ResultCode;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 全局应答
  */
 @Data
-public class CommonResult<T> {
+public class CommonResult<T> implements Serializable {
 
     // 应答码
     private String status;
