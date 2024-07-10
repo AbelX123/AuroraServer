@@ -20,6 +20,9 @@ public class CommonResult<T> implements Serializable {
     // 重要信息签名
     private String sign;
 
+    public CommonResult() {
+    }
+
     private CommonResult(Builder<T> builder) {
         this.status = builder.status;
         this.message = builder.message;

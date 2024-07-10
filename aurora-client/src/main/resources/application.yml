@@ -1,7 +1,7 @@
 server:
   port: 8080
 
-# datasource
+# spring相关配置
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -18,4 +18,11 @@ spring:
   data:
     mongodb:
       uri: mongodb://aurora:12345678@192.168.184.135:27017/aurora?authSource=aurora
+
+# 第三方相关配置
+## 文心一言
+ai:
+  baidu:
+    access_key: 8ef0bd9b8c42423eaf2fae33739d2ca3
+    secret_key: 9cc1e409d7ba48bca8e4fe5dc822a39f
 

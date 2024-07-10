@@ -1,29 +1,28 @@
 package com.aurora.client.service.impl;
 
-import com.aurora.client.common.dto.ContentDTO;
+import com.aurora.client.common.dto.ChatDTO;
+import com.aurora.client.common.entity.ContentDetailEntity;
 import com.aurora.client.common.entity.ContentEntity;
-import com.aurora.client.common.po.ContentPO;
 import com.aurora.client.common.vo.ContentVO;
 import com.aurora.client.common.vo.ProfileVO;
 import com.aurora.client.exception.ServiceException;
+import com.aurora.client.mapper.ContentDetailMapper;
 import com.aurora.client.mapper.ContentMapper;
 import com.aurora.client.service.IContentService;
 import com.aurora.client.utils.PeriodUtil;
+import com.aurora.client.utils.QFUtil;
+import com.baidubce.qianfan.model.ApiErrorResponse;
+import com.baidubce.qianfan.model.exception.ApiException;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.aurora.client.common.enumeration.ResultCode.MIDDLEWARE_ERROR;
+import static com.aurora.client.common.enumeration.ResultCode.NOT_ALLOW;
 
 
 @Slf4j
@@ -31,18 +30,14 @@ import static com.aurora.client.common.enumeration.ResultCode.MIDDLEWARE_ERROR;
 public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity> implements IContentService {
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private ContentDetailMapper contentDetailMapper;
+
+    @Autowired
+    private ContentMapper contentMapper;
 
     @Override
     public ContentVO getContentByContentId(String contentId) {
-        ContentVO vo = new ContentVO();
-        Query query = new Query();
-        query.addCriteria(Criteria.where("content_id").is(contentId));
-        ContentPO po = mongoTemplate.findOne(query, ContentPO.class);
-        if (null != po && null != po.getContent()) {
-            vo.setContent(po.getContent());
-        }
-        return vo;
+        return null;
     }
 
     @Override
@@ -54,6 +49,62 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
         ProfileVO vo = encapsulateList(list);
         vo.setUserId(userId);
         return vo;
+    }
+
+    /**
+     * websocket处理对话问题
+     */
+    @Override
+    public String handleChat(ChatDTO chat) {
+        log.info("开始处理问答对话");
+        String answer = "";
+        if (null == chat.getUserId()) {
+            throw new ServiceException(NOT_ALLOW);
+        }
+        if (null != chat.getContentId() && null == chat.getPreviousDetailId()) {
+            throw new ServiceException(NOT_ALLOW);
+        }
+
+        ContentEntity ce = new ContentEntity();
+        ContentDetailEntity cde = new ContentDetailEntity();
+
+        // 具体内容共享
+        cde.setDetailId(UUID.randomUUID().toString());
+        cde.setDetailAsk(chat.getAsk());
+        cde.setDetailCreateTime(LocalDateTime.now());
+
+        if (null == chat.getContentId()) { // 新建对话
+            // 内容
+            String contentId = UUID.randomUUID().toString();
+            ce.setContentId(contentId);
+            ce.setContentProfile(chat.getAsk());
+            ce.setContentCreateTime(LocalDateTime.now());
+            ce.setUserId(chat.getUserId());
+            // 具体内容
+            cde.setDetailParentId(cde.getDetailId()); // 父对话就是本身
+            cde.setContentId(contentId);
+            contentMapper.insert(ce);
+        } else { // 继续对话
+            cde.setDetailParentId(chat.getPreviousDetailId());
+            cde.setContentId(chat.getContentId());
+        }
+        // API调用
+        try {
+            answer = QFUtil.ask(chat.getAsk());
+            cde.setDetailStatus("0000");
+            cde.setDetailMsg("success");
+            cde.setDetailAnswer(answer);
+        } catch (ApiException e) {
+            // 记录错误
+            ApiErrorResponse eResp = e.getErrorResponse();
+            log.error(eResp.toString());
+            cde.setDetailStatus(eResp.getErrorCode().toString());
+            cde.setDetailMsg(eResp.getErrorMsg());
+            cde.setDetailAnswer(eResp.getErrorMsg());
+        }
+        contentDetailMapper.insert(cde);
+
+        return answer;
     }
 
     /**
@@ -90,48 +141,4 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
         return pvo;
     }
 
-    @Override
-    public boolean saveContent(ContentDTO contentDTO) {
-        boolean save;
-        ContentPO contentPO = new ContentPO();
-        String contentId = UUID.randomUUID().toString();
-
-        ContentEntity contentEntity = new ContentEntity();
-        BeanUtils.copyProperties(contentDTO, contentEntity);
-        contentEntity.setContentId(contentId);
-        contentEntity.setContentCreateTime(LocalDateTime.now());
-        try {
-            save = this.save(contentEntity);
-        } catch (Exception e) {
-            log.error("MYSQL存储失败:{}", e.getMessage());
-            throw new ServiceException(MIDDLEWARE_ERROR);
-        }
-
-        contentPO.setContentId(contentId);
-        contentPO.setContent(contentDTO.getContent());
-        try {
-            mongoTemplate.insert(contentPO);
-        } catch (Exception e) {
-            log.error("MONGODB存储失败:[{}]", contentDTO);
-            throw new ServiceException(MIDDLEWARE_ERROR);
-        }
-
-        return save;
-    }
-
-    @Override
-    public boolean updateContent(ContentDTO contentDTO) {
-        String contentId = contentDTO.getContentId();
-        Query query = new Query();
-        query.addCriteria(Criteria.where("content_id").is(contentId));
-        Update u = new Update();
-        u.set("content", contentDTO.getContent());
-        try {
-            mongoTemplate.updateFirst(query, u, ContentPO.class, "content");
-            return true;
-        } catch (Exception e) {
-            log.error("[{}]更新文档错误:{}", contentId, e.getMessage());
-            throw new ServiceException(MIDDLEWARE_ERROR);
-        }
-    }
 }

@@ -13,5 +13,5 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ContentVO extends ContentEntity {
-    private String content;
+    private String contentId;
 }

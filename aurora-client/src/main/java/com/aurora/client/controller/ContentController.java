@@ -1,19 +1,17 @@
 package com.aurora.client.controller;
 
 import com.aurora.client.common.CommonResult;
-import com.aurora.client.common.dto.ContentDTO;
-import com.aurora.client.common.validation.ContentValidationGroup;
 import com.aurora.client.common.vo.ContentVO;
 import com.aurora.client.common.vo.ProfileVO;
 import com.aurora.client.service.IContentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static com.aurora.client.common.enumeration.ResultCode.OTHER_ERROR;
 
 @Slf4j
 @RestController
@@ -24,38 +22,10 @@ public class ContentController {
     private IContentService cs;
 
     /**
-     * 问答入库
-     */
-    @PostMapping("/saveContent")
-    public CommonResult<ContentVO> saveContent(@RequestBody @Validated ContentDTO contentDTO) {
-        boolean save = cs.saveContent(contentDTO);
-        if (save) {
-            return CommonResult.success();
-        } else {
-            return CommonResult.failure(OTHER_ERROR);
-        }
-    }
-
-    /**
-     * 问答更新
-     */
-    @PutMapping("/updateContent")
-    public CommonResult<ContentVO> updateContent(@RequestBody
-                                                 @Validated(value = ContentValidationGroup.Update.class) ContentDTO contentDTO) {
-        boolean update = cs.updateContent(contentDTO);
-        if (update) {
-            return CommonResult.success();
-        } else {
-            return CommonResult.failure(OTHER_ERROR);
-        }
-    }
-
-    /**
      * 依据内容编号获取内容
      */
     @GetMapping("/getContentByContentId")
     public CommonResult<ContentVO> getContentByContentId(@RequestParam(value = "contentId") String contentId) {
-        log.info("-----");
         return CommonResult.success(cs.getContentByContentId(contentId));
     }
 
