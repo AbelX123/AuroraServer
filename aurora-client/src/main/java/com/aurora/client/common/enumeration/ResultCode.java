@@ -7,6 +7,8 @@ public enum ResultCode {
 
     SUCCESS("0000", "success"),
 
+    NOT_ALLOW("404", "没有访问权限"),
+
     VALIDATE_ERROR("9000", "参数验证错误"),
 
     MIDDLEWARE_ERROR("9001", "第三方异常，请稍后重试"),
