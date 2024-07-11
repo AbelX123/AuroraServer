@@ -3,6 +3,7 @@ package com.aurora.client.service.impl;
 import com.aurora.client.common.dto.ChatDTO;
 import com.aurora.client.common.entity.ContentDetailEntity;
 import com.aurora.client.common.entity.ContentEntity;
+import com.aurora.client.common.query.ContentQuery;
 import com.aurora.client.common.vo.ContentVO;
 import com.aurora.client.common.vo.ProfileVO;
 import com.aurora.client.exception.ServiceException;
@@ -10,10 +11,10 @@ import com.aurora.client.mapper.ContentDetailMapper;
 import com.aurora.client.mapper.ContentMapper;
 import com.aurora.client.service.IContentService;
 import com.aurora.client.utils.PeriodUtil;
-import com.aurora.client.utils.QFUtil;
 import com.baidubce.qianfan.model.ApiErrorResponse;
 import com.baidubce.qianfan.model.exception.ApiException;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,19 +37,38 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
     private ContentMapper contentMapper;
 
     @Override
-    public ContentVO getContentByContentId(String contentId) {
+    public ContentVO getContentDetailByContentId(ContentQuery contentDTO) {
+        String contentId = contentDTO.getContentId();
+
+        Page<ContentEntity> page = contentDTO.toMpPage();
+
+        Page<ContentEntity> p = lambdaQuery()
+                .eq(contentId != null, ContentEntity::getContentId, contentId)
+                .page(page);
+
+        System.out.println(p);
+
         return null;
     }
 
     @Override
-    public ProfileVO getProfileByUserId(String userId) {
-        QueryWrapper<ContentEntity> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_id", userId)
-                .orderByDesc("content_create_time");
-        List<ContentEntity> list = this.list(wrapper);
-        ProfileVO vo = encapsulateList(list);
-        vo.setUserId(userId);
-        return vo;
+    public ProfileVO getProfileByUserId(ContentQuery cq) {
+
+        OrderItem oi = new OrderItem();
+        oi.setColumn("content_create_time");
+        oi.setAsc(false);
+        Page<ContentEntity> page = cq.toMpPage(oi);
+
+        Page<ContentEntity> p = lambdaQuery().eq(cq.getUserId() != null, ContentEntity::getUserId, cq.getUserId())
+                .page(page);
+
+        List<ContentEntity> records = p.getRecords();
+
+        // 将分页数据封装为前端需要的形式
+        ProfileVO pvo = encapsulateList(records);
+        pvo.setUserId(cq.getUserId());
+
+        return pvo;
     }
 
     /**
@@ -90,7 +110,8 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
         }
         // API调用
         try {
-            answer = QFUtil.ask(chat.getAsk());
+//            answer = QFUtil.ask(chat.getAsk());
+            answer = "你好，我是默认回答";
             cde.setDetailStatus("0000");
             cde.setDetailMsg("success");
             cde.setDetailAnswer(answer);
@@ -109,9 +130,6 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
 
     /**
      * 封装概括区数据
-     *
-     * @param list
-     * @return
      */
     private ProfileVO encapsulateList(List<ContentEntity> list) {
         ProfileVO pvo = new ProfileVO();
@@ -131,12 +149,14 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
             }
             map.get(key).add(cvo);
         }
+
         map.forEach((key, value) -> {
             ProfileVO.AllProfile allProfile = new ProfileVO.AllProfile();
             allProfile.setTime(key);
             allProfile.setProfiles(value);
             allProfiles.add(allProfile);
         });
+
         pvo.setAllProfiles(allProfiles);
         return pvo;
     }

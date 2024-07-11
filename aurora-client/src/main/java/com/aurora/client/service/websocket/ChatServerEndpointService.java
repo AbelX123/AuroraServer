@@ -24,6 +24,9 @@ import static com.aurora.client.common.enumeration.ResultCode.SUCCESS;
 @ServerEndpoint("/ask")
 public class ChatServerEndpointService {
 
+    /**
+     * 因为在websocket建立连接的时候还会创建ChatServerEndpointService,所以用直接用@Autowired注入会在使用的时候为null
+     */
     private static IContentService contentService;
 
     @Autowired

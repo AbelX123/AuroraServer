@@ -2,6 +2,7 @@ package com.aurora.client.service;
 
 import com.aurora.client.common.dto.ChatDTO;
 import com.aurora.client.common.entity.ContentEntity;
+import com.aurora.client.common.query.ContentQuery;
 import com.aurora.client.common.vo.ContentVO;
 import com.aurora.client.common.vo.ProfileVO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -11,9 +12,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IContentService extends IService<ContentEntity> {
 
-    ContentVO getContentByContentId(String contentId);
+    ContentVO getContentDetailByContentId(ContentQuery contentDTO);
 
-    ProfileVO getProfileByUserId(String userId);
+    ProfileVO getProfileByUserId(ContentQuery cq);
 
     String handleChat(ChatDTO chat);
 }

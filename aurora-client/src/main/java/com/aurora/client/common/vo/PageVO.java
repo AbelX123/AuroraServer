@@ -1,37 +1,39 @@
 package com.aurora.client.common.vo;
 
-import com.aurora.client.utils.AuroraStringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
-import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 分页VO
  */
 @Data
-public class PageVO implements Serializable {
+public class PageVO<T> {
 
-    private static final long serialVersionUID = 1L;
+    private Long total;
+    private Long pages;
+    private List<T> list;
 
-    private Integer pageNumber = 1;
-
-    private Integer pageSize = 10;
-
-    private String sort;
-
-    private String order;
-
-    private Boolean notConvert;
-
-    public String getSort() {
-        if (StringUtils.isNotEmpty(sort)) {
-            if (notConvert == null || Boolean.FALSE.equals(notConvert)) {
-                return AuroraStringUtils.camel2Underline(sort);
-            } else {
-                return sort;
-            }
+    public static <PO, VO> PageVO<VO> of(Page<PO> p, Function<PO, VO> convertor) {
+        PageVO<VO> pvo = new PageVO<>();
+        // 1.总条数
+        pvo.setTotal(p.getTotal());
+        // 2.总页数
+        pvo.setPages(p.getPages());
+        // 3.当前页数据
+        List<PO> records = p.getRecords();
+        if (CollectionUtils.isEmpty(records)) {
+            pvo.setList(Collections.emptyList());
+            return pvo;
         }
-        return sort;
+        // 4.拷贝user的VO
+        pvo.setList(records.stream().map(convertor).collect(Collectors.toList()));
+        // 5.返回
+        return pvo;
     }
 }
