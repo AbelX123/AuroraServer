@@ -3,7 +3,6 @@ package com.aurora.client.service;
 import com.aurora.client.common.dto.ChatDTO;
 import com.aurora.client.common.entity.ContentEntity;
 import com.aurora.client.common.query.ContentQuery;
-import com.aurora.client.common.vo.ContentVO;
 import com.aurora.client.common.vo.ProfileVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -11,8 +10,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * 问答内容相关
  */
 public interface IContentService extends IService<ContentEntity> {
-
-    ContentVO getContentDetailByContentId(ContentQuery contentDTO);
 
     ProfileVO getProfileByUserId(ContentQuery cq);
 

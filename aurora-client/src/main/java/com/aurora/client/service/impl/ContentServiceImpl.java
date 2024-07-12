@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -37,28 +38,15 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
     private ContentMapper contentMapper;
 
     @Override
-    public ContentVO getContentDetailByContentId(ContentQuery contentDTO) {
-        String contentId = contentDTO.getContentId();
-
-        Page<ContentEntity> page = contentDTO.toMpPage();
-
-        Page<ContentEntity> p = lambdaQuery()
-                .eq(contentId != null, ContentEntity::getContentId, contentId)
-                .page(page);
-
-        System.out.println(p);
-
-        return null;
-    }
-
-    @Override
     public ProfileVO getProfileByUserId(ContentQuery cq) {
 
+        // 分页排序
         OrderItem oi = new OrderItem();
         oi.setColumn("content_create_time");
         oi.setAsc(false);
         Page<ContentEntity> page = cq.toMpPage(oi);
 
+        // 分页条件以及查询
         Page<ContentEntity> p = lambdaQuery().eq(cq.getUserId() != null, ContentEntity::getUserId, cq.getUserId())
                 .page(page);
 
@@ -111,7 +99,7 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
         // API调用
         try {
 //            answer = QFUtil.ask(chat.getAsk());
-            answer = "你好，我是默认回答";
+            answer = "你好，我是默认回答" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             cde.setDetailStatus("0000");
             cde.setDetailMsg("success");
             cde.setDetailAnswer(answer);
