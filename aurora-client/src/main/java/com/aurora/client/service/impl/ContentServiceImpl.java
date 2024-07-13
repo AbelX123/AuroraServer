@@ -1,5 +1,6 @@
 package com.aurora.client.service.impl;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.aurora.client.common.dto.ChatDTO;
 import com.aurora.client.common.entity.ContentDetailEntity;
 import com.aurora.client.common.entity.ContentEntity;
@@ -17,6 +18,7 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,11 +67,20 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
     @Override
     public String handleChat(ChatDTO chat) {
         log.info("开始处理问答对话");
+        JSONObject jo = new JSONObject();
+
         String answer = "";
-        if (null == chat.getUserId()) {
+        String detailId;
+        String cId = chat.getContentId();
+        String pdId = chat.getPreviousDetailId();
+
+        if (StringUtils.isBlank(chat.getUserId())) {
             throw new ServiceException(NOT_ALLOW);
         }
-        if (null != chat.getContentId() && null == chat.getPreviousDetailId()) {
+        // contentId和previousDetailId要么都有，要么都没有
+        if (
+                (StringUtils.isBlank(cId) && StringUtils.isNotBlank(pdId)) || (StringUtils.isNotBlank(cId) && StringUtils.isBlank(pdId))
+        ) {
             throw new ServiceException(NOT_ALLOW);
         }
 
@@ -77,24 +88,26 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
         ContentDetailEntity cde = new ContentDetailEntity();
 
         // 具体内容共享
-        cde.setDetailId(UUID.randomUUID().toString());
+        detailId = UUID.randomUUID().toString();
+        cde.setDetailId(detailId);
         cde.setDetailAsk(chat.getAsk());
         cde.setDetailCreateTime(LocalDateTime.now());
+        jo.put("detailId", pdId);
 
-        if (null == chat.getContentId()) { // 新建对话
+        if (StringUtils.isBlank(cId)) { // 新建对话
             // 内容
-            String contentId = UUID.randomUUID().toString();
-            ce.setContentId(contentId);
+            cId = UUID.randomUUID().toString();
+            ce.setContentId(cId);
             ce.setContentProfile(chat.getAsk());
             ce.setContentCreateTime(LocalDateTime.now());
             ce.setUserId(chat.getUserId());
             // 具体内容
-            cde.setDetailParentId(cde.getDetailId()); // 父对话就是本身
-            cde.setContentId(contentId);
+            cde.setDetailParentId(detailId); // 父对话就是本身
+            cde.setContentId(cId);
             contentMapper.insert(ce);
         } else { // 继续对话
-            cde.setDetailParentId(chat.getPreviousDetailId());
-            cde.setContentId(chat.getContentId());
+            cde.setDetailParentId(pdId);
+            cde.setContentId(cId);
         }
         // API调用
         try {
@@ -112,8 +125,10 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
             cde.setDetailAnswer(eResp.getErrorMsg());
         }
         contentDetailMapper.insert(cde);
-
-        return answer;
+        jo.put("contentId", cId);
+        jo.put("detailId", detailId);
+        jo.put("answer", answer);
+        return jo.toString();
     }
 
     /**
