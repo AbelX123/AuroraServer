@@ -1,4 +1,4 @@
-package com.aurora.client.configuration;
+package com.aurora.client.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

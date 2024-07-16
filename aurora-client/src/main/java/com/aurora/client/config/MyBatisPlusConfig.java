@@ -1,4 +1,4 @@
-package com.aurora.client.configuration;
+package com.aurora.client.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

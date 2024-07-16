@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static com.aurora.client.common.enumeration.ResultCode.NOT_ALLOW;
+import static com.aurora.client.common.enumeration.ResultCode._401;
 
 
 @Slf4j
@@ -75,13 +75,13 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
         String pdId = chat.getPreviousDetailId();
 
         if (StringUtils.isBlank(chat.getUserId())) {
-            throw new ServiceException(NOT_ALLOW);
+            throw new ServiceException(_401);
         }
         // contentId和previousDetailId要么都有，要么都没有
         if (
                 (StringUtils.isBlank(cId) && StringUtils.isNotBlank(pdId)) || (StringUtils.isNotBlank(cId) && StringUtils.isBlank(pdId))
         ) {
-            throw new ServiceException(NOT_ALLOW);
+            throw new ServiceException(_401);
         }
 
         ContentEntity ce = new ContentEntity();

@@ -1,9 +1,13 @@
 package com.aurora.client.common;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import com.aurora.client.common.enumeration.ResultCode;
 import lombok.Data;
 
 import java.io.Serializable;
+
+import static com.aurora.client.common.enumeration.ResultCode.SUCCESS;
 
 /**
  * 全局应答
@@ -20,96 +24,61 @@ public class CommonResult<T> implements Serializable {
     // 重要信息签名
     private String sign;
 
-    public CommonResult() {
+    public CommonResult(ResultCode code) {
+        this.status = code.getStatus();
+        this.message = code.getMessage();
     }
 
-    private CommonResult(Builder<T> builder) {
-        this.status = builder.status;
-        this.message = builder.message;
-        this.data = builder.data;
-        this.sign = builder.sign;
+    public CommonResult(ResultCode code, T data) {
+        this.status = code.getStatus();
+        this.message = code.getMessage();
+        this.data = data;
     }
 
-    public static <T> Builder<T> newBuilder() {
-        return new Builder<>();
+    public CommonResult(String status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
+    public CommonResult(String status, String message, T data) {
+        this.status = status;
+        this.message = message;
+        this.data = data;
     }
 
     /**
-     * 成功的应答
+     * 返回成功，没有data
      */
     public static <T> CommonResult<T> success() {
-        return CommonResult.<T>newBuilder().status(ResultCode.SUCCESS.getStatus())
-                .message(ResultCode.SUCCESS.getMessage())
-                .build();
+        return new CommonResult<>(SUCCESS);
     }
 
     /**
-     * 成功含有数据的应答
+     * 返回成功，有data
      */
     public static <T> CommonResult<T> success(T data) {
-        return CommonResult.<T>newBuilder().status(ResultCode.SUCCESS.getStatus())
-                .message(ResultCode.SUCCESS.getMessage())
-                .data(data)
-                .sign(null)
-                .build();
+        return new CommonResult<>(SUCCESS, data);
     }
 
     /**
-     * 失败的应答
+     * 返回失败，没有data
      */
-    public static <T> CommonResult<T> failure(ResultCode failure) {
-        // 静态范型方法调用
-        return CommonResult.<T>newBuilder().status(failure.getStatus())
-                .message(failure.getMessage())
-                .build();
+    public static <T> CommonResult<T> failure(ResultCode code) {
+        return new CommonResult<>(code);
     }
 
     /**
-     * 失败含有数据的应答
+     * 返回失败，有data
      */
-    public static <T> CommonResult<T> failure(ResultCode failure, T data) {
-        // 静态范型方法调用
-        return CommonResult.<T>newBuilder().status(failure.getStatus())
-                .message(failure.getMessage())
-                .data(data)
-                .build();
+    public static <T> CommonResult<T> failure(ResultCode code, T data) {
+        return new CommonResult<>(code, data);
     }
 
-
-    // 构造类
-    @Data
-    public static class Builder<T> {
-        private String status;
-        private String message;
-        private T data;
-        private String sign;
-
-        private Builder() {
-        }
-
-        public Builder<T> status(String status) {
-            this.status = status;
-            return this;
-        }
-
-        public Builder<T> message(String message) {
-            this.message = message;
-            return this;
-        }
-
-        public Builder<T> data(T data) {
-            this.data = data;
-            return this;
-        }
-
-        public Builder<T> sign(String sign) {
-            this.sign = sign;
-            return this;
-        }
-
-        public CommonResult<T> build() {
-            return new CommonResult<>(this);
-        }
+    /**
+     * 转换为json字符串
+     */
+    public String toJsonString() {
+        return JSON.toJSONString(this, JSONWriter.Feature.IgnoreNonFieldGetter);
     }
 
 }

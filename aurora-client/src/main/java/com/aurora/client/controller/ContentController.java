@@ -41,7 +41,7 @@ public class ContentController {
     @GetMapping("/getContentDetailByContentId")
     public CommonResult<List<ContentDetailVO>> getContentDetailByContentId(ContentQuery cq) {
         if (cq.getUserId() == null) {
-            throw new ServiceException(ResultCode.NOT_ALLOW);
+            throw new ServiceException(ResultCode._404);
         }
         List<ContentDetailVO> result = cds.getContentDetailByContentId(cq);
         return CommonResult.success(result);
