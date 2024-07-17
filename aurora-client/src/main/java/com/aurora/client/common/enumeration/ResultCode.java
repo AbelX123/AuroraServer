@@ -17,6 +17,7 @@ public enum ResultCode {
     USER_EXIST("1000", "用户已存在"),
     USER_NOT_EXIST("1001", "用户不存在"),
     USER_PASSWORD_NOT_MATCH("1002", "用户名或密码错误"),
+    USER_TOKEN_EXPIRED("1003", "登录凭证过期，请重新登录"),
 
     // 共性异常提示从9000开始
     VALIDATE_ERROR("9000", "参数验证错误"),

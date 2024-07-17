@@ -62,4 +62,12 @@ public class JwtUtils {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+
+    /**
+     * 判定是否过期
+     */
+    public static boolean ifExpired(String token) {
+        Claims claims = parseToken(token);
+        return claims.getExpiration().before(new Date());
+    }
 }

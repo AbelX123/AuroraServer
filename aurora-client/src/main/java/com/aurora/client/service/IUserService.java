@@ -10,4 +10,6 @@ public interface IUserService extends IService<UserEntity> {
     void signUp(UserDTO userDTO);
 
     UserVO signIn(UserDTO userDTO);
+
+    UserVO refresh(UserDTO userDTO);
 }

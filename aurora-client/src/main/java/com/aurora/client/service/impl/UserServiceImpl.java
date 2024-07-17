@@ -10,6 +10,8 @@ import com.aurora.client.service.IUserService;
 import com.aurora.client.utils.JwtUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +24,9 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.aurora.client.common.enumeration.ResultCode.USER_EXIST;
-import static com.aurora.client.common.enumeration.ResultCode.USER_PASSWORD_NOT_MATCH;
+import static com.aurora.client.common.enumeration.ResultCode.*;
 
+@Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> implements IUserService {
 
@@ -75,6 +77,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         BeanUtils.copyProperties(myUserDetails, vo);
         vo.setToken(JwtUtils.generateToken(vo.getUserId()));
         vo.setRefreshToken(JwtUtils.generateRefreshToken(vo.getUserId()));
+        return vo;
+    }
+
+    /**
+     * 刷新token
+     */
+    @Override
+    public UserVO refresh(UserDTO userDTO) {
+        String userId = userDTO.getUserId();
+        String token = userDTO.getToken();
+        String refreshToken = userDTO.getRefreshToken();
+        // 判空
+        if (StringUtils.isAnyBlank(userId, token, refreshToken)) {
+            throw new ServiceException(_403);
+        }
+        // 验证token合法性-有效期
+        if (JwtUtils.ifExpired(token) && JwtUtils.ifExpired(refreshToken)) {
+            throw new ServiceException(USER_TOKEN_EXPIRED);
+        }
+        // 验证token和refresh_token是同一个用户的
+        try {
+            Claims tokenClaims = JwtUtils.parseToken(token);
+            Claims refreshClaims = JwtUtils.parseToken(refreshToken);
+            if (!tokenClaims.getSubject().equals(refreshClaims.getSubject())) {
+                throw new ServiceException(_403);
+            }
+        } catch (Exception e) {
+            log.error("token验证失败:[{}]", e.getMessage());
+            throw new ServiceException(_403);
+        }
+        // 生成新的token和refresh_token
+        token = JwtUtils.generateToken(userId);
+        refreshToken = JwtUtils.generateRefreshToken(userId);
+        UserVO vo = new UserVO();
+        vo.setUserId(userId);
+        vo.setToken(token);
+        vo.setRefreshToken(refreshToken);
+
         return vo;
     }
 }

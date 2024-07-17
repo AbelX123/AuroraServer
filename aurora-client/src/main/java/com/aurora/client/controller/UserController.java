@@ -26,6 +26,11 @@ public class UserController {
         return CommonResult.success(userService.signIn(userDTO));
     }
 
+    @GetMapping("/refresh")
+    public CommonResult<?> refresh(@RequestBody @Validated UserDTO userDTO) {
+        return CommonResult.success(userService.refresh(userDTO));
+    }
+
     @GetMapping("/hello")
     public CommonResult<?> hello() {
         return CommonResult.success("hello");
