@@ -11,5 +11,5 @@ public interface IUserService extends IService<UserEntity> {
 
     UserVO signIn(UserDTO userDTO);
 
-    UserVO refresh(UserDTO userDTO);
+    UserVO refresh();
 }

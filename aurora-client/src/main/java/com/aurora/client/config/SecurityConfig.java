@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 // 对于登录注册接口 允许匿名访问
-                .antMatchers("/user/signIn", "/user/signUp", "/user/refresh").permitAll()
+                .antMatchers("/user/signIn", "/user/signUp").permitAll()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated();
 
