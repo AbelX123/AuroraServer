@@ -14,6 +14,7 @@
         <mybatis-plus-boot-starter.version>3.5.5</mybatis-plus-boot-starter.version>
         <fastjson2.version>2.0.49</fastjson2.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
+        <jjwt.version>0.12.6</jjwt.version>
     </properties>
     <dependencies>
         <dependency>
@@ -82,6 +83,12 @@
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2-extension-spring5</artifactId>
             <version>${fastjson2.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
         </dependency>
 
         <!--文心一言SDK-->

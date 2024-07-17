@@ -1,13 +1,19 @@
 package com.aurora.client.config;
 
 import com.aurora.client.common.CommonResult;
+import com.aurora.client.security.InMybatisUserDetailsService;
+import com.aurora.client.security.MyAuthenticationProvider;
 import com.aurora.client.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,6 +31,18 @@ public class SecurityConfig {
 
 //    @Autowired
 //    private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+
+    @Autowired
+    private InMybatisUserDetailsService userDetailsService;
+
+    private MyAuthenticationProvider myAuthenticationProvider;
+
+    @Autowired
+    public void setMyAuthenticationProvider(MyAuthenticationProvider myAuthenticationProvider) {
+        myAuthenticationProvider.setUserDetailsService(userDetailsService);
+        myAuthenticationProvider.setPasswordEncoder(new BCryptPasswordEncoder());
+        this.myAuthenticationProvider = myAuthenticationProvider;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -60,11 +78,27 @@ public class SecurityConfig {
 
     /**
      * 注入BCrypt算法编码器
-     *
-     * @return
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * 重写UserDetailsService
+     */
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new InMybatisUserDetailsService();
+    }
+
+    /**
+     * 将认证操作交给AuthenticationManager管理
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(myAuthenticationProvider);
+        return authenticationManagerBuilder.build();
     }
 }

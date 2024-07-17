@@ -15,15 +15,15 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @PostMapping("/signIn")
-    public CommonResult<UserVO> login(@RequestBody @Validated UserDTO userDTO) {
-        return CommonResult.success(userService.signIn(userDTO));
-    }
-
     @PostMapping("/signUp")
     public CommonResult<?> signUp(@RequestBody @Validated UserDTO userDTO) {
         userService.signUp(userDTO);
         return CommonResult.success();
+    }
+
+    @PostMapping("/signIn")
+    public CommonResult<UserVO> login(@RequestBody @Validated UserDTO userDTO) {
+        return CommonResult.success(userService.signIn(userDTO));
     }
 
     @GetMapping("/hello")

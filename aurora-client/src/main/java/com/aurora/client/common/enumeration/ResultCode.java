@@ -15,6 +15,8 @@ public enum ResultCode {
 
     // 用户相关错误码从1000开始
     USER_EXIST("1000", "用户已存在"),
+    USER_NOT_EXIST("1001", "用户不存在"),
+    USER_PASSWORD_NOT_MATCH("1002", "用户名或密码错误"),
 
     // 共性异常提示从9000开始
     VALIDATE_ERROR("9000", "参数验证错误"),
