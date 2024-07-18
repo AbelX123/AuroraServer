@@ -22,9 +22,3 @@ ai:
   baidu:
     access_key: 8ef0bd9b8c42423eaf2fae33739d2ca3
     secret_key: 9cc1e409d7ba48bca8e4fe5dc822a39f
-logging:
-  level:
-    org:
-      springframework:
-        security: debug
-        security.web.FilterChainProxy: debug

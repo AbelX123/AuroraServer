@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Objects;
 
-import static com.aurora.client.common.enumeration.ResultCode.USER_NOT_EXIST;
+import static com.aurora.client.common.enumeration.ResultCode.USER_PASSWORD_NOT_MATCH;
 
 /**
  * 以mybatis plus加载用户数据
@@ -31,7 +31,7 @@ public class InMybatisUserDetailsService implements UserDetailsService {
         wrapper.eq(UserEntity::getUserName, username);
         UserEntity userEntity = userMapper.selectOne(wrapper);
         if (Objects.isNull(userEntity)) {
-            throw new ServiceException(USER_NOT_EXIST);
+            throw new ServiceException(USER_PASSWORD_NOT_MATCH);
         }
         return new MyUserDetails(userEntity.getUserId(), username, userEntity.getUserPassword(), Collections.emptySet());
     }

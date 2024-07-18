@@ -26,7 +26,6 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getAllErrors().forEach(error -> errors.put(((FieldError) error).getField(), error.getDefaultMessage()));
         log.error("参数校验失败:[{}]", errors);
-        e.printStackTrace();
         return CommonResult.failure(VALIDATE_ERROR, errors);
     }
 
@@ -35,7 +34,6 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = ServiceException.class)
     public CommonResult<Object> serviceExceptionHandler(ServiceException e) {
-        e.printStackTrace();
         return CommonResult.failure(e.getResultCode());
     }
 
@@ -45,7 +43,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public CommonResult<Object> exception(Exception e) {
         log.error("未知异常:[{}]", e.getMessage());
-        e.printStackTrace();
         return CommonResult.failure(OTHER_ERROR);
     }
 
