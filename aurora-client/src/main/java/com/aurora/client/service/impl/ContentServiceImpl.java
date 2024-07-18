@@ -66,7 +66,6 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
      */
     @Override
     public String handleChat(ChatDTO chat) {
-        log.info("开始处理问答对话");
         JSONObject jo = new JSONObject();
 
         String answer = "";

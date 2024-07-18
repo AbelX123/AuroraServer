@@ -46,7 +46,6 @@ public class ChatServerEndpointService {
     @OnOpen
     public void onOpen(Session session) {
         sessionMap.put(session.getId(), session);
-        log.info("WebSocket is connected, Session id is {}.", session.getId());
     }
 
     /**
@@ -54,7 +53,6 @@ public class ChatServerEndpointService {
      */
     @OnMessage
     public void onMessage(String text, Session session) {
-        log.info("WebSocket receive:{}, Session id is {}", text, session.getId());
         ChatDTO dto = JSON.to(ChatDTO.class, text);
         String result;
         try {
@@ -74,7 +72,6 @@ public class ChatServerEndpointService {
     @OnClose
     public void onClose(Session session) {
         sessionMap.remove(session.getId());
-        log.info("Websocket is closed.");
     }
 
     /**
@@ -89,7 +86,6 @@ public class ChatServerEndpointService {
      *
      */
     public void sendToClient(ResultCode resultCode, String result, Session session) {
-        log.info("WebSocket Response is {}", result);
         try {
             if (resultCode.getStatus().equals(SUCCESS.getStatus())) {
                 session.getBasicRemote().sendText(JSON.toJSONString(CommonResult.success(result)));
