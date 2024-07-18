@@ -46,6 +46,9 @@ public class SecurityConfig {
         this.myAuthenticationProvider = myAuthenticationProvider;
     }
 
+    /**
+     * 自定义过滤器链
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -56,7 +59,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 // 对于登录注册接口 允许匿名访问
-                .antMatchers("/user/signIn", "/user/signUp").permitAll()
+                .antMatchers("/user/signIn", "/user/signUp", "/ask").permitAll()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated();
 

@@ -88,7 +88,7 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
         ContentDetailEntity cde = new ContentDetailEntity();
 
         // 具体内容共享
-        detailId = UUID.randomUUID().toString();
+        detailId = StringUtils.replace(UUID.randomUUID().toString(), "-", "");
         cde.setDetailId(detailId);
         cde.setDetailAsk(chat.getAsk());
         cde.setDetailCreateTime(LocalDateTime.now());
@@ -96,7 +96,7 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
 
         if (StringUtils.isBlank(cId)) { // 新建对话
             // 内容
-            cId = UUID.randomUUID().toString();
+            cId = StringUtils.replace(UUID.randomUUID().toString(), "-", "");
             ce.setContentId(cId);
             ce.setContentProfile(chat.getAsk());
             ce.setContentCreateTime(LocalDateTime.now());
