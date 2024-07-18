@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Redis业务流程通用服务
@@ -23,6 +24,13 @@ public class RedisService {
      */
     public void set(String key, Object value) {
         redisTemplate.opsForValue().set(key, value);
+    }
+
+    /**
+     * 存储（设置过期时间）
+     */
+    public void setExpMillis(String key, Object value, Long exp) {
+        redisTemplate.opsForValue().set(key, value, exp, TimeUnit.MILLISECONDS);
     }
 
     /**

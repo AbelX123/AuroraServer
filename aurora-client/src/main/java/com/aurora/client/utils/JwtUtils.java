@@ -64,10 +64,17 @@ public class JwtUtils {
     }
 
     /**
-     * 判定是否过期
+     * 判定是否过期，这里只能返回未过期的false状态，如果过期会抛出异常 ExpiredJwtException
      */
     public static boolean ifExpired(String token) {
         Claims claims = parseToken(token);
         return claims.getExpiration().before(new Date());
+    }
+
+    public static Long getExp(String token) {
+        Claims claims = parseToken(token);
+        // 注意这里拿出来的时间和原本设置的时间是有差距的，原本的时间是精确到毫秒的，这里的时间只精确到秒，但是是以毫秒表示的
+        // 1721311782259 --> 1721311782000
+        return claims.getExpiration().getTime();
     }
 }
