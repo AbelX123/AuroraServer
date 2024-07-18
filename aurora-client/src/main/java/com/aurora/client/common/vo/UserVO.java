@@ -1,12 +1,16 @@
 package com.aurora.client.common.vo;
 
 import lombok.Data;
+import lombok.ToString;
+
+import java.io.Serializable;
 
 /**
  * UserVO
  */
 @Data
-public class UserVO {
+@ToString
+public class UserVO implements Serializable {
 
     private String userId;
 

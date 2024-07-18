@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 其他未只异常
+     * 其他未知异常
      */
     @ExceptionHandler(value = Exception.class)
     public CommonResult<Object> exception(Exception e) {

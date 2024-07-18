@@ -10,7 +10,7 @@ spring:
     url: jdbc:mysql://192.168.184.135:3306/aurora
   redis:
     host: 192.168.184.135
-    database: 1
+    database: 0
     port: 6379
     timeout: 3000
     username: default

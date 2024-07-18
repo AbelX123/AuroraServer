@@ -5,6 +5,8 @@ import com.aurora.client.common.entity.UserEntity;
 import com.aurora.client.common.vo.UserVO;
 import com.aurora.client.exception.ServiceException;
 import com.aurora.client.mapper.UserMapper;
+import com.aurora.client.redis.RedisPrefix;
+import com.aurora.client.redis.RedisService;
 import com.aurora.client.security.MyUserDetails;
 import com.aurora.client.service.IUserService;
 import com.aurora.client.utils.JwtUtils;
@@ -37,6 +39,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RedisService redisService;
+
     /**
      * 注册用户
      */
@@ -67,7 +72,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      */
     @Override
     public UserVO signIn(UserDTO userDTO) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword());
+        String username = userDTO.getUsername();
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, userDTO.getPassword());
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
         if (!authenticate.isAuthenticated()) {   // 认证通过
             throw new ServiceException(USER_PASSWORD_NOT_MATCH);
@@ -76,8 +82,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         MyUserDetails myUserDetails = (MyUserDetails) authenticate.getPrincipal();
         UserVO vo = new UserVO();
         BeanUtils.copyProperties(myUserDetails, vo);
-        vo.setToken(JwtUtils.generateToken(vo.getUserId()));
-        vo.setRefreshToken(JwtUtils.generateRefreshToken(vo.getUserId()));
+        String token = JwtUtils.generateToken(vo.getUserId());
+        vo.setToken(token);
+        String refreshToken = JwtUtils.generateRefreshToken(vo.getUserId());
+        vo.setRefreshToken(refreshToken);
+
+        String webTokenKey = RedisPrefix.PREFIX_WEB_TOKEN + myUserDetails.getUserId();
+        String webRefreshTokenKey = RedisPrefix.PREFIX_WEB_REFRESH_TOKEN + myUserDetails.getUserId();
+
+        // 存储用户新的token，这里直接使用set方法，没有就添加，有就覆盖
+        redisService.set(webTokenKey, token);
+        redisService.set(webRefreshTokenKey, refreshToken);
+
         return vo;
     }
 
@@ -96,6 +112,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         vo.setUserId(userId);
         vo.setToken(token);
         vo.setRefreshToken(refreshToken);
+
+        // 刷新缓存
+        String webTokenKey = RedisPrefix.PREFIX_WEB_TOKEN + userId;
+        String webRefreshTokenKey = RedisPrefix.PREFIX_WEB_REFRESH_TOKEN + userId;
+        redisService.set(webTokenKey, token);
+        redisService.set(webRefreshTokenKey, refreshToken);
 
         return vo;
     }
