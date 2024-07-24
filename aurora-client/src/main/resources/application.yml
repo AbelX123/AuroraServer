@@ -4,21 +4,21 @@ server:
 # spring相关配置
 spring:
   datasource:
+    url: jdbc:mysql://${sys_mysql_host}:${sys_mysql_port}/${sys_mysql_database}
+    username: ${sys_mysql_username}
+    password: ${sys_mysql_password}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: 12345678
-    url: jdbc:mysql://192.168.184.135:3306/aurora
   redis:
-    host: 192.168.184.135
-    database: 0
-    port: 6379
+    host: ${sys_redis_host}
+    port: ${sys_redis_port}
+    username: ${sys_redis_username}
+    password: ${sys_redis_password}
+    connect-timeout: 3000
     timeout: 3000
-    username: default
-    password: 12345678
 
 # 第三方相关配置
 ## 文心一言
 ai:
   baidu:
-    access_key: 8ef0bd9b8c42423eaf2fae33739d2ca3
-    secret_key: 9cc1e409d7ba48bca8e4fe5dc822a39f
+    access_key: ${baidu_access_key}
+    secret_key: ${baidu_secret_key}

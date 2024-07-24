@@ -11,6 +11,8 @@ import java.io.Serializable;
 @TableName("aurora_user")
 public class UserEntity implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * 用户编号
      */
