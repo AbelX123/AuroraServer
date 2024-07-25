@@ -12,21 +12,20 @@ import org.springframework.stereotype.Component;
 public class QFUtil {
 
     @Value("${ai.baidu.access_key}")
-    private static String accessKey;
+    private String accessKey;
 
     @Value("${ai.baidu.secret_key}")
-    private static String secretKey;
+    private String secretKey;
 
     public String ask(String ask) {
 
         Qianfan qianfan = new Qianfan(accessKey, secretKey);
         ChatResponse resp;
         try {
-            resp = qianfan.chatCompletion().model("ERNIE-4.0-8K")
-                    .addMessage("user", ask)
-                    .execute();
+            resp = qianfan.chatCompletion().model("ERNIE-4.0-8K").addMessage("user", ask).execute();
         } catch (ApiException e) {
             log.error("调用baidu失败: {}", e.getMessage());
+            e.printStackTrace();
             throw e;
         }
         return resp.getResult();
