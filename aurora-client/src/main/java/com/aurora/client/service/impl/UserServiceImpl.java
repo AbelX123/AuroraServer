@@ -116,9 +116,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         // 刷新缓存
         String webTokenKey = RedisPrefix.PREFIX_WEB_TOKEN + userId;
         String webRefreshTokenKey = RedisPrefix.PREFIX_WEB_REFRESH_TOKEN + userId;
-        System.out.println(webTokenKey);
-        System.out.println(token);
-        System.out.println(JwtUtils.getExp(token));
         redisService.setExpMillis(webTokenKey, token, JwtUtils.getExp(token));
         redisService.setExpMillis(webRefreshTokenKey, refreshToken, JwtUtils.getExp(refreshToken));
 

@@ -1,10 +1,8 @@
 package com.aurora.client.config;
 
 import com.aurora.client.redis.FastJsonRedisSerializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -18,13 +16,8 @@ import java.util.Set;
 @Configuration
 public class RedisConfig {
 
-    @Autowired
-    private Environment environment;
-
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
-        String redisPort = environment.getProperty("REDIS_PORT");
-        System.out.println(redisPort);
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
 
