@@ -15,7 +15,7 @@
 | ......                         |                  |         |
 | 后端                             |                  |         |
 | spring-boot-starter-web        | spring项目脚手架      | 2.7.8   |
-| spring-boot-starter-validation | jsr验证            | 2.7.8   |
+| spring-boot-starter-validation | 验证            | 2.7.8   |
 | spring-boot-starter-data-redis | redis集成          | 2.7.8   |
 | spring-boot-starter-websocket  | websocket集成      | 2.7.8   |
 | spring-boot-starter-security   | spring-security  | 2.7.8   |
