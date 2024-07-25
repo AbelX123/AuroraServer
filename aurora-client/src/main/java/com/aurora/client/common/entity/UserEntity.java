@@ -1,5 +1,6 @@
 package com.aurora.client.common.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ public class UserEntity implements Serializable {
     /**
      * 用户编号
      */
+    @TableId("user_id")
     private String userId;
 
     /**

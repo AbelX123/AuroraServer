@@ -12,6 +12,7 @@ import com.aurora.client.mapper.ContentDetailMapper;
 import com.aurora.client.mapper.ContentMapper;
 import com.aurora.client.service.IContentService;
 import com.aurora.client.utils.PeriodUtil;
+import com.aurora.client.utils.QFUtil;
 import com.baidubce.qianfan.model.ApiErrorResponse;
 import com.baidubce.qianfan.model.exception.ApiException;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
@@ -22,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -32,6 +32,9 @@ import static com.aurora.client.common.enumeration.ResultCode._401;
 @Slf4j
 @Service
 public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity> implements IContentService {
+
+    @Autowired
+    private QFUtil qfUtil;
 
     @Autowired
     private ContentDetailMapper contentDetailMapper;
@@ -110,8 +113,7 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
         }
         // API调用
         try {
-//            answer = QFUtil.ask(chat.getAsk());
-            answer = "你好，我是默认回答" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            answer = qfUtil.ask(chat.getAsk());
             cde.setDetailStatus("0000");
             cde.setDetailMsg("success");
             cde.setDetailAnswer(answer);

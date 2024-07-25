@@ -1,5 +1,6 @@
 package com.aurora.client.common.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ public class ContentDetailEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId("detail_id")
     private String detailId;
     private String detailAsk;
     private String detailAnswer;
