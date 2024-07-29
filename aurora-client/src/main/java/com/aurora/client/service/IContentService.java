@@ -13,5 +13,5 @@ public interface IContentService extends IService<ContentEntity> {
 
     ProfileVO getProfileByUserId(ContentQuery cq);
 
-    String handleChat(ChatDTO chat);
+    void saveContent(String contentId, ChatDTO chatDTO);
 }

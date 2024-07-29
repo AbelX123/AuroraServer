@@ -12,15 +12,15 @@ public enum Period {
     YEAR_AGO(30 * 12, "一年前"),
     TWO_YEAR_AGO(30 * 24, "二年前");
 
-    private final long dayBefore;
+    private final int dayBefore;
     private final String dayName;
 
-    Period(long dayBefore, String dayName) {
+    Period(int dayBefore, String dayName) {
         this.dayBefore = dayBefore;
         this.dayName = dayName;
     }
 
-    public long getDayBefore() {
+    public int getDayBefore() {
         return dayBefore;
     }
 

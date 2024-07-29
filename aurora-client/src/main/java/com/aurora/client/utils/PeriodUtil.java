@@ -25,4 +25,13 @@ public class PeriodUtil {
 
         return rp;
     }
+
+    public static String getDayNameFromDayBefore(int key) {
+        for (Period p : Period.values()) {
+            if (p.getDayBefore() == key) {
+                return p.getDayName();
+            }
+        }
+        return null;
+    }
 }

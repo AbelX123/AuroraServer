@@ -1,33 +1,20 @@
 package com.aurora.client.utils;
 
 import com.baidubce.qianfan.Qianfan;
+import com.baidubce.qianfan.core.StreamIterator;
 import com.baidubce.qianfan.model.chat.ChatResponse;
-import com.baidubce.qianfan.model.exception.ApiException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import lombok.Builder;
 
-@Slf4j
-@Component
+@Builder
 public class QFUtil {
 
-    @Value("${ai.baidu.access_key}")
     private String accessKey;
 
-    @Value("${ai.baidu.secret_key}")
     private String secretKey;
 
-    public String ask(String ask) {
-
+    public StreamIterator<ChatResponse> ask(String ask) {
         Qianfan qianfan = new Qianfan(accessKey, secretKey);
-        ChatResponse resp;
-        try {
-            resp = qianfan.chatCompletion().model("ERNIE-4.0-8K").addMessage("user", ask).execute();
-        } catch (ApiException e) {
-            log.error("调用baidu失败: {}", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-        return resp.getResult();
+        return qianfan.chatCompletion().model("ERNIE-4.0-8K").addMessage("user", ask).executeStream();
     }
+
 }

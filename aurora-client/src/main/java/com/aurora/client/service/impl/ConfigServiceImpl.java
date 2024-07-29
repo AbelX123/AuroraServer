@@ -7,6 +7,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 @Service
-public class IConfigServiceImpl extends ServiceImpl<ConfigMapper, ConfigEntity> implements IConfigService {
+public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, ConfigEntity> implements IConfigService {
 
 }

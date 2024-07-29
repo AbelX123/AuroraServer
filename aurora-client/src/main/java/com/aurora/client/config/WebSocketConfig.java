@@ -1,14 +1,20 @@
 package com.aurora.client.config;
 
-import org.springframework.context.annotation.Bean;
+import com.aurora.client.handler.QFWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 @Configuration
-public class WebSocketConfig {
+@EnableWebSocket
+public class WebSocketConfig implements WebSocketConfigurer {
 
-    @Bean(name = "myServerEndpointExporter")
-    public ServerEndpointExporter serverEndpointExporter() {
-        return new ServerEndpointExporter();
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(new QFWebSocketHandler(), "/ask")
+                .setAllowedOrigins("*")
+                .addInterceptors(new HttpSessionHandshakeInterceptor());
     }
 }
