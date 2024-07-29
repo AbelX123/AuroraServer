@@ -1,6 +1,7 @@
 # 介绍
 前端地址：#https://github.com/AbelX123/AuroraWeb
 描述：ai-aurora提供一个使用ai文本问答的客户端示例，ai基于百度文心一言。
+体验地址：#http://121.43.144.99:3000/
 # 框架
 
 | 前端                             |                  | 版本      |
