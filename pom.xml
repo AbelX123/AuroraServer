@@ -1,19 +1,152 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!--maven模版版本-->
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.aurora</groupId>
     <artifactId>AuroraServer</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
 
-    <name>AuroraServer</name>
+    <!--打包方式-->
+    <packaging>pom</packaging>
+
+    <!--包含模块-->
+    <modules>
+        <module>aurora-client</module>
+    </modules>
+
 
     <properties>
+        <!--指定编译环境JDK版本-->
+        <maven.compiler.source>11</maven.compiler.source>
+        <!--指定运行环境JDK版本-->
+        <maven.compiler.target>11</maven.compiler.target>
+        <!--指定项目构建编码-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--依赖版本管理-->
+        <spring-boot-dependencies.version>2.7.8</spring-boot-dependencies.version>
+        <mysql.version>8.0.28</mysql.version>
+        <mybatis-plus-boot-starter.version>3.5.5</mybatis-plus-boot-starter.version>
+        <fastjson2.version>2.0.49</fastjson2.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <jjwt.version>0.12.6</jjwt.version>
+        <qf.version>0.0.9</qf.version>
     </properties>
 
-    <dependencies>
+    <!--依赖声明-->
+    <dependencyManagement>
+        <dependencies>
+            <!--将`spring-boot-dependencies`pom文件中的所有依赖版本信息引入
+                到项目中，供所有子模块使用，子模块不用再具体声明版本-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus-boot-starter.version}</version>
+            </dependency>
+            <!--  FastJson2中FastJsonHttpMessageConverter找不到类问题 by https://zhengkai.blog.csdn.net/-->
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2-extension-spring5</artifactId>
+                <version>${fastjson2.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
 
+            <!--文心一言SDK-->
+            <dependency>
+                <groupId>com.baidubce</groupId>
+                <artifactId>qianfan</artifactId>
+                <version>${qf.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!--编译插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <!--插件配置信息-->
+                <configuration>
+                    <!--编译环境JDK版本-->
+                    <source>${maven.compiler.source}</source>
+                    <!--运行环境JDK版本-->
+                    <target>${maven.compiler.target}</target>
+                    <!--编码格式-->
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
