@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.aurora</groupId>
+        <artifactId>AuroraServer</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>aurora-bootstrap</artifactId>
+
+    <dependencies>
+        <!--*** 子模块依赖 ***-->
+        <dependency>
+            <groupId>com.aurora</groupId>
+            <artifactId>aurora-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <!--构建项-->
+    <build>
+        <finalName>aurora-ai-${revision}</finalName>
+        <plugins>
+            <!--编译插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <!--插件配置信息-->
+                <configuration>
+                    <!--编译环境JDK版本-->
+                    <source>${maven.compiler.source}</source>
+                    <!--运行环境JDK版本-->
+                    <target>${maven.compiler.target}</target>
+                    <!--编码格式-->
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <!-- springboot项目打包插件 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- 指定该Main Class为全局的唯一入口 -->
+                    <mainClass>com.aurora.BootstrapApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!--可以把依赖的包都打包到生成的Jar包中-->
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
