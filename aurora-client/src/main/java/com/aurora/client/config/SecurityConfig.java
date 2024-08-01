@@ -8,6 +8,7 @@ import com.aurora.client.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -29,6 +30,7 @@ import static com.aurora.client.common.enumeration.ResultCode._403;
 @Slf4j
 @Configuration
 @EnableWebSecurity
+@ComponentScan(basePackages = {"com.aurora.client"})
 public class SecurityConfig {
 
     @Autowired

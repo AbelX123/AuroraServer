@@ -32,25 +32,25 @@ import static com.aurora.client.common.enumeration.ResultCode._401;
 @Component
 public class QFWebSocketHandler extends TextWebSocketHandler {
 
-    private static ApiService apiService;
+    private ApiService apiService;
 
     @Autowired
     public void setApiService(ApiService apiService) {
-        QFWebSocketHandler.apiService = apiService;
+        this.apiService = apiService;
     }
 
-    private static IContentService contentService;
+    private IContentService contentService;
 
     @Autowired
     public void setContentService(IContentService contentService) {
-        QFWebSocketHandler.contentService = contentService;
+        this.contentService = contentService;
     }
 
-    private static IContentDetailService contentDetailService;
+    private IContentDetailService contentDetailService;
 
     @Autowired
     public void setContentDetailService(IContentDetailService contentDetailService) {
-        QFWebSocketHandler.contentDetailService = contentDetailService;
+        this.contentDetailService = contentDetailService;
     }
 
     @Override
